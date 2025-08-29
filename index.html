@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sword of Justice Rebate Calculator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            position: relative;
+        }
+        h1 {
+            color: #1a237e;
+            margin-bottom: 10px;
+            font-size: 1.8em;
+        }
+        p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .lang-switch {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 8px 12px;
+            background-color: #e0e0e0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        #characterInputs .character-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f7f7f7;
+            border-radius: 8px;
+        }
+        .input-item {
+            flex: 1;
+            text-align: left;
+        }
+        .input-item label {
+            display: block;
+            font-size: 0.9em;
+            color: #555;
+            margin-bottom: 5px;
+        }
+        .input-item input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+        .remove-btn {
+            background-color: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 1.2em;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: background-color 0.2s;
+        }
+        .remove-btn:hover {
+            background-color: #e55a5a;
+        }
+        .add-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 10px;
+        }
+        .add-btn:hover {
+            background-color: #45a049;
+        }
+        .result-box {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            text-align: left;
+            border: 1px solid #c8e6c9;
+        }
+        .result-box h3 {
+            color: #2e7d32;
+            margin-top: 0;
+        }
+        .result-box p {
+            margin: 5px 0;
+            color: #2e7d32;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .result-box .result-label-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .result-box span {
+            font-weight: normal;
+        }
+        .jade-icon {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+        }
+        .result-box .result-value {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="lang-switch" onclick="toggleLanguage()">EN / TH</button>
+        <h1 data-en="Rebate Calculator" data-th="โปรแกรมคำนวณเงินคืน">Rebate Calculator</h1>
+        <p data-en="For Sword of Justice Closed Beta Participants" data-th="สำหรับผู้เข้าร่วม Sword of Justice Closed Beta">For Sword of Justice Closed Beta Participants</p>
+        
+        <div id="characterInputs">
+            <div class="character-group">
+                <div class="input-item">
+                    <label data-en="Top-Up (Jade):" data-th="ยอดเติมหยก:">Top-Up (Jade):</label>
+                    <input type="number" class="top-up-amount" min="0" value="0" oninput="calculateRebate()">
+                </div>
+                <div class="input-item">
+                    <label data-en="Level:" data-th="เลเวล:">Level:</label>
+                    <input type="number" class="character-level" min="1" value="1" oninput="calculateRebate()">
+                </div>
+                <button class="remove-btn" onclick="removeCharacter(this)" style="display: none;">x</button>
+            </div>
+        </div>
+
+        <button class="add-btn" onclick="addCharacter()" data-en="+ Add Character" data-th="+ เพิ่มตัวละคร">+ Add Character</button>
+
+        <div class="result-box">
+            <h3 data-en="Total Return" data-th="ยอดเงินคืนรวม">Total Return</h3>
+            <p>
+                <span class="result-label-group">
+                    <img src="unbound.jpg" alt="Ornate Jade Icon" class="jade-icon">
+                    <span data-en="Ornate Jade:" data-th="หยกเติม:">Ornate Jade:</span>
+                </span>
+                <span id="unboundResult" class="result-value">0</span>
+            </p>
+            <p>
+                <span class="result-label-group">
+                    <img src="bound.jpg" alt="Soulbound Ornate Jade Icon" class="jade-icon">
+                    <span data-en="Ornate Jade (Bound):" data-th="หยกผูก:">Ornate Jade (Bound):</span> 
+                </span>
+                <span id="soulboundResult" class="result-value">0</span>
+            </p>
+        </div>
+
+        <div style="margin-top: 20px; font-size: 0.9em; color: #666;">
+            <span data-en="Note: This tool is for calculation convenience only. Please read the official information from the game developer for accuracy." data-th="หมายเหตุ: เครื่องมือนี้เป็นเพียงการอำนวยความสะดวกในการคำนวณเท่านั้น โปรดอ่านข้อมูลอย่างเป็นทางการจากผู้พัฒนาเกมเพื่อความถูกต้อง">หมายเหตุ: เครื่องมือนี้เป็นเพียงการอำนวยความสะดวกในการคำนวณเท่านั้น โปรดอ่านข้อมูลอย่างเป็นทางการจากผู้พัฒนาเกมเพื่อความถูกต้อง</span>
+            <br/><a href="https://www.swordofjustice.com/en/banner/20250828/42152_1256611.html" target="_blank" style="color: #1a237e; text-decoration: none; font-weight: bold;" data-en="Read more details here" data-th="อ่านรายละเอียดเพิ่มเติมที่นี่">อ่านรายละเอียดเพิ่มเติมที่นี่</a>
+        </div>
+    </div>
+
+    <script>
+        let isEnglish = true;
+
+        function updateTexts() {
+            document.querySelectorAll('[data-en]').forEach(element => {
+                element.textContent = isEnglish ? element.getAttribute('data-en') : element.getAttribute('data-th');
+            });
+            document.title = isEnglish ? "Sword of Justice Rebate Calculator" : "โปรแกรมคำนวณเงินคืน Sword of Justice";
+        }
+
+        function toggleLanguage() {
+            isEnglish = !isEnglish;
+            updateTexts();
+        }
+
+        function addCharacter() {
+            const characterInputs = document.getElementById('characterInputs');
+            const newCharacter = document.createElement('div');
+            newCharacter.className = 'character-group';
+            newCharacter.innerHTML = `
+                <div class="input-item">
+                    <label data-en="Top-Up (Jade):" data-th="ยอดเติมหยก:">Top-Up (Jade):</label>
+                    <input type="number" class="top-up-amount" min="0" value="0" oninput="calculateRebate()">
+                </div>
+                <div class="input-item">
+                    <label data-en="Level:" data-th="เลเวล:">Level:</label>
+                    <input type="number" class="character-level" min="1" value="1" oninput="calculateRebate()">
+                </div>
+                <button class="remove-btn" onclick="removeCharacter(this)">x</button>
+            `;
+            characterInputs.appendChild(newCharacter);
+            updateTexts();
+            calculateRebate();
+        }
+
+        function removeCharacter(button) {
+            const characterGroup = button.parentNode;
+            characterGroup.remove();
+            calculateRebate();
+        }
+
+        function calculateRebate() {
+            const characterGroups = document.querySelectorAll('.character-group');
+            let totalTopUp = 0;
+            let highestLevel = 0;
+
+            characterGroups.forEach(group => {
+                const topUpAmount = parseInt(group.querySelector('.top-up-amount').value) || 0;
+                const characterLevel = parseInt(group.querySelector('.character-level').value) || 0;
+
+                totalTopUp += topUpAmount;
+                if (characterLevel > highestLevel) {
+                    highestLevel = characterLevel;
+                }
+            });
+
+            const unboundJade = totalTopUp;
+            let soulboundJade = 0;
+            
+            const baseForBonus = Math.min(totalTopUp, 30000);
+
+            if (highestLevel >= 60) {
+                soulboundJade = baseForBonus * 0.50;
+            } else if (highestLevel > 0 && highestLevel < 60) {
+                soulboundJade = baseForBonus * 0.30;
+            }
+
+            document.getElementById('unboundResult').textContent = unboundJade.toLocaleString();
+            document.getElementById('soulboundResult').textContent = soulboundJade.toLocaleString();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateTexts();
+            calculateRebate();
+        });
+    </script>
+</body>
+</html>
