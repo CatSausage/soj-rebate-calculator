@@ -1,303 +1,532 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sword of Justice Rebate Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .container {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 450px;
-            text-align: center;
-            position: relative;
-            z-index: 0;
-        }
-        h1 {
-            color: #1a237e;
-            margin-bottom: 10px;
-            font-size: 1.8em;
-        }
-        p {
-            color: #666;
-            margin-bottom: 20px;
-        }
-        .lang-switch {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            padding: 8px 12px;
-            background-color: #e0e0e0;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9em;
-        }
-        #characterInputs .character-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-            padding: 10px;
-            background-color: #f7f7f7;
-            border-radius: 8px;
-        }
-        .input-item {
-            flex: 1;
-            text-align: left;
-        }
-        .input-item label {
-            display: block;
-            font-size: 0.9em;
-            color: #555;
-            margin-bottom: 5px;
-        }
-        .input-item input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-            font-size: 1em;
-        }
-        .remove-btn {
-            background-color: #ff6b6b;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            font-size: 1.2em;
-            cursor: pointer;
-            flex-shrink: 0;
-            transition: background-color 0.2s;
-        }
-        .remove-btn:hover {
-            background-color: #e55a5a;
-        }
-        .add-btn {
-            width: 100%;
-            padding: 12px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1em;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            margin-top: 10px;
-        }
-        .add-btn:hover {
-            background-color: #45a049;
-        }
-        .result-box {
-            margin-top: 25px;
-            padding: 20px;
-            background-color: white;
-            border-radius: 10px;
-            text-align: left;
-            border: 1px solid #c8e6c9;
-        }
-        .result-box h3 {
-            color: #2e7d32;
-            margin-top: 0;
-        }
-        .result-box p {
-            margin: 5px 0;
-            color: #2e7d32;
-            font-weight: bold;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .result-box .result-label-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .result-box span {
-            font-weight: normal;
-        }
-        .jade-icon {
-            width: 24px;
-            height: 24px;
-            vertical-align: middle;
-        }
-        .result-box .result-value {
-            font-size: 1.2em;
-            font-weight: bold;
-        }
-        .footer-note {
-            margin-top: 20px;
-            font-size: 0.9em;
-            color: black;
-            text-align: center;
-            z-index: 50;
-        }
-        .footer-note a {
-            color: #1a237e;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .footer-note a:hover {
-            text-decoration: underline;
-        }
-        .youtube-icon {
-            width: 20px;
-            height: 20px;
-            vertical-align: middle;
-            margin-left: 5px; /* Adjust spacing as needed */
-        }
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      /* Simple transition for adding new character groups */
+      .character-group {
+        transition: all 0.3s ease-in-out;
+      }
+      /* Hide the remove button for the first character */
+      #characterInputs .character-group:first-child .remove-btn {
+        display: none;
+      }
     </style>
-</head>
-<body>
-    <div class="container">
-        <button class="lang-switch" onclick="toggleLanguage()">EN / TH</button>
-        <h1 data-en="Rebate Calculator" data-th="โปรแกรมคำนวณเงินคืน">Rebate Calculator</h1>
-        <p data-en="For Sword of Justice Closed Beta Participants" data-th="สำหรับผู้เข้าร่วม Sword of Justice Closed Beta">For Sword of Justice Closed Beta Participants</p>
-        
-        <div id="characterInputs">
-            <div class="character-group">
-                <div class="input-item">
-                    <label data-en="Top-Up (Jade):" data-th="ยอดเติมหยก:">Top-Up (Jade):</label>
-                    <input type="number" class="top-up-amount" min="0" value="0" oninput="calculateRebate()">
-                </div>
-                <div class="input-item">
-                    <label data-en="Level:" data-th="เลเวล:">Level:</label>
-                    <input type="number" class="character-level" min="1" value="1" oninput="calculateRebate()">
-                </div>
-                <button class="remove-btn" onclick="removeCharacter(this)" style="display: none;">x</button>
-            </div>
+  </head>
+  <body
+    class="bg-gray-900 text-gray-200 flex items-center justify-center min-h-screen p-4"
+  >
+    <div
+      class="bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-xl relative ring-1 ring-white/10"
+    >
+      <button
+        type="button"
+        class="lang-switch absolute top-4 right-4 bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-3 rounded-lg text-sm transition-colors"
+      >
+        EN / ไทย
+      </button>
+
+      <h1
+        class="text-3xl font-bold text-cyan-400 text-center mb-2 mt-10"
+        data-en="Rebate Calculator"
+        data-th="โปรแกรมคำนวณเงินคืน"
+      >
+        Rebate Calculator
+      </h1>
+      <p
+        class="text-gray-400 text-center mb-6"
+        data-en="For Sword of Justice Closed Beta Participants"
+        data-th="สำหรับผู้เข้าร่วม Sword of Justice Closed Beta"
+      >
+        For Sword of Justice Closed Beta Participants
+      </p>
+
+      <div class="mb-4">
+        <label
+          for="currency"
+          class="block text-sm font-medium text-gray-400 mb-2"
+          data-en="Currency:"
+          data-th="สกุลเงิน:"
+          >Currency:</label
+        >
+        <select
+          id="currency"
+          class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-2.5 focus:ring-cyan-500 focus:border-cyan-500"
+        >
+          <option value="USD" data-en="USD (iOS)" data-th="ดอลลาร์สหรัฐ (iOS)">
+            USD (iOS)
+          </option>
+          <option value="THB" data-en="THB (iOS)" data-th="บาท (iOS)">
+            THB (iOS)
+          </option>
+        </select>
+      </div>
+
+      <div id="characterInputs">
+        <!-- Character group template -->
+        <div
+          class="character-group bg-gray-700/50 p-4 rounded-lg flex items-center gap-4 mb-4"
+        >
+          <div class="flex-1">
+            <label
+              class="block text-sm font-medium text-gray-400 mb-1"
+              data-en="Estimated Top-Up (Jade):"
+              data-th="ยอดประมาณการเติมหยก:"
+              >Estimated Top-Up (Jade):</label
+            >
+            <input
+              type="number"
+              class="top-up-amount w-full bg-gray-900/50 border border-gray-600 rounded-md p-2 text-white focus:ring-cyan-500 focus:border-cyan-500"
+              min="0"
+              value="0"
+            />
+          </div>
+          <div class="flex-1">
+            <label
+              class="block text-sm font-medium text-gray-400 mb-1"
+              data-en="Level:"
+              data-th="เลเวล:"
+              >Level:</label
+            >
+            <select
+              class="character-level-select w-full bg-gray-700 border border-gray-600 text-white rounded-lg p-2.5 focus:ring-cyan-500 focus:border-cyan-500"
+            >
+              <option value="1" data-en="Below Lv.60" data-th="ไม่ถึงเลเวล 60">
+                Below Lv.60
+              </option>
+              <option value="60" data-en="Lv.60+" data-th="ถึงเลเวล 60">
+                Lv.60+
+              </option>
+            </select>
+          </div>
+          <button
+            class="remove-btn bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-lg transition-colors flex-shrink-0"
+            type="button"
+          >
+            ×
+          </button>
         </div>
+      </div>
 
-        <button class="add-btn" onclick="addCharacter()" data-en="+ Add Character" data-th="+ เพิ่มตัวละคร">+ Add Character</button>
+      <button
+        class="add-btn w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+        type="button"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        <span data-en="Add Character" data-th="เพิ่มตัวละคร"
+          >Add Character</span
+        >
+      </button>
 
-        <div class="result-box">
-            <h3 data-en="Total Return" data-th="ยอดเงินคืนรวม">Total Return</h3>
-            <p>
-                <span class="result-label-group">
-                    <img src="images/jade-unbound.jpg" alt="Ornate Jade Icon" class="jade-icon">
-                    <span data-en="Ornate Jade:" data-th="หยกเติม:">Ornate Jade:</span>
-                </span>
-                <span id="unboundResult" class="result-value">0</span>
-            </p>
-            <p>
-                <span class="result-label-group">
-                    <img src="images/jade-bound.jpg" alt="Soulbound Ornate Jade Icon" class="jade-icon">
-                    <span data-en="Ornate Jade (Bound):" data-th="หยกผูก:">Ornate Jade (Bound):</span> 
-                </span>
-                <span id="soulboundResult" class="result-value">0</span>
-            </p>
+      <div class="mt-6 bg-gray-700/50 p-5 rounded-lg border border-gray-600">
+        <h3
+          class="text-lg font-semibold text-cyan-400 mb-4"
+          data-en="Total Return"
+          data-th="ยอดเงินคืนรวม"
+        >
+          Total Return
+        </h3>
+        <div class="space-y-3">
+          <p class="flex justify-between items-center text-gray-300">
+            <span class="flex items-center gap-2">
+              <img
+                src="./images/jade-unbound.png"
+                alt="Ornate Jade"
+                class="h-6 w-6"
+              />
+              <span data-en="Ornate Jade:" data-th="หยกเติม:"
+                >Ornate Jade:</span
+              >
+            </span>
+            <span id="unboundResult" class="font-bold text-xl text-white"
+              >0</span
+            >
+          </p>
+          <p class="flex justify-between items-center text-gray-300">
+            <span class="flex items-center gap-2">
+              <img
+                src="./images/jade-bound.png"
+                alt="Ornate Jade (Bound)"
+                class="h-6 w-6"
+              />
+              <span data-en="Ornate Jade (Bound):" data-th="หยกผูก:"
+                >Ornate Jade (Bound):</span
+              >
+            </span>
+            <span id="soulboundResult" class="font-bold text-xl text-white"
+              >0</span
+            >
+          </p>
         </div>
+      </div>
 
-        <div class="footer-note">
-            <span data-en="Note: This tool is for calculation convenience only. Please read the official information from the game developer for accuracy." data-th="หมายเหตุ: เครื่องมือนี้เป็นเพียงการอำนวยความสะดวกในการคำนวณเท่านั้น โปรดอ่านข้อมูลอย่างเป็นทางการจากผู้พัฒนาเกมเพื่อความถูกต้อง">หมายเหตุ: เครื่องมือนี้เป็นเพียงการอำนวยความสะดวกในการคำนวณเท่านั้น โปรดอ่านข้อมูลอย่างเป็นทางการจากผู้พัฒนาเกมเพื่อความถูกต้อง</span>
-            <br/><a href="https://www.swordofjustice.com/en/banner/20250828/42152_1256611.html" target="_blank" data-en="Read more details here" data-th="อ่านรายละเอียดเพิ่มเติมที่นี่">อ่านรายละเอียดเพิ่มเติมที่นี่</a>
+      <div
+        id="costSection"
+        class="mt-4 bg-gray-700/50 p-5 rounded-lg border border-gray-600"
+      >
+        <h3
+          class="text-lg font-semibold text-cyan-400 mb-4"
+          data-en="Payment Details"
+          data-th="รายละเอียดการชำระเงิน"
+        >
+          Payment Details
+        </h3>
+        <div class="space-y-3">
+          <p class="flex justify-between items-center text-gray-300">
+            <span data-en="Estimated Cost:" data-th="ค่าใช้จ่ายโดยประมาณ:"
+              >Estimated Cost:</span
+            >
+            <span id="totalCost" class="font-bold text-xl text-white">0</span>
+          </p>
+          <p class="flex justify-between items-center text-gray-300">
+            <span
+              data-en="Actual Jade from Packs:"
+              data-th="หยกจริงที่จะได้รับ:"
+              >Actual Jade from Packs:</span
+            >
+            <span id="actualJade" class="font-bold text-xl text-white">0</span>
+          </p>
         </div>
-
-        <div style="margin-top: 15px; margin-bottom: 15px; background: #EEE; height: 1px; width: 100%;"></div>
-
-        <div class="footer-note" style="margin-top: 15px; display: flex; flex-direction: row; gap: 10px; justify-content: center;">
-            <a href="https://www.youtube.com/@JusticeCatSausage" target="_blank" aria-label="YouTube Channel 1" style="display: flex; flex-direction: row; gap: 3px;">
-                <svg style="width: 24px; height: 24px; fill:red;" viewBox="0 0 24 24" fill="currentColor"><path d="M12.2439 4C12.778 4.00294 14.1143 4.01586 15.5341 4.07273L16.0375 4.09468C17.467 4.16236 18.8953 4.27798 19.6037 4.4755C20.5486 4.74095 21.2913 5.5155 21.5423 6.49732C21.942 8.05641 21.992 11.0994 21.9982 11.8358L21.9991 11.9884L21.9991 11.9991C21.9991 11.9991 21.9991 12.0028 21.9991 12.0099L21.9982 12.1625C21.992 12.8989 21.942 15.9419 21.5423 17.501C21.2878 18.4864 20.5451 19.261 19.6037 19.5228C18.8953 19.7203 17.467 19.8359 16.0375 19.9036L15.5341 19.9255C14.1143 19.9824 12.778 19.9953 12.2439 19.9983L12.0095 19.9991L11.9991 19.9991C11.9991 19.9991 11.9956 19.9991 11.9887 19.9991L11.7545 19.9983C10.6241 19.9921 5.89772 19.941 4.39451 19.5228C3.4496 19.2573 2.70692 18.4828 2.45587 17.501C2.0562 15.9419 2.00624 12.8989 2 12.1625V11.8358C2.00624 11.0994 2.0562 8.05641 2.45587 6.49732C2.7104 5.51186 3.45308 4.73732 4.39451 4.4755C5.89772 4.05723 10.6241 4.00622 11.7545 4H12.2439ZM9.99911 8.49914V15.4991L15.9991 11.9991L9.99911 8.49914Z"></path></svg>
-                <div>Cat Sausage</div>
-            </a>
-            <a href="https://www.youtube.com/@กุนเชียงแมว" target="_blank" aria-label="YouTube Channel 1" style="display: flex; flex-direction: row; gap: 3px;">
-                <svg style="width: 24px; height: 24px; fill:red;" viewBox="0 0 24 24" fill="currentColor"><path d="M12.2439 4C12.778 4.00294 14.1143 4.01586 15.5341 4.07273L16.0375 4.09468C17.467 4.16236 18.8953 4.27798 19.6037 4.4755C20.5486 4.74095 21.2913 5.5155 21.5423 6.49732C21.942 8.05641 21.992 11.0994 21.9982 11.8358L21.9991 11.9884L21.9991 11.9991C21.9991 11.9991 21.9991 12.0028 21.9991 12.0099L21.9982 12.1625C21.992 12.8989 21.942 15.9419 21.5423 17.501C21.2878 18.4864 20.5451 19.261 19.6037 19.5228C18.8953 19.7203 17.467 19.8359 16.0375 19.9036L15.5341 19.9255C14.1143 19.9824 12.778 19.9953 12.2439 19.9983L12.0095 19.9991L11.9991 19.9991C11.9991 19.9991 11.9956 19.9991 11.9887 19.9991L11.7545 19.9983C10.6241 19.9921 5.89772 19.941 4.39451 19.5228C3.4496 19.2573 2.70692 18.4828 2.45587 17.501C2.0562 15.9419 2.00624 12.8989 2 12.1625V11.8358C2.00624 11.0994 2.0562 8.05641 2.45587 6.49732C2.7104 5.51186 3.45308 4.73732 4.39451 4.4755C5.89772 4.05723 10.6241 4.00622 11.7545 4H12.2439ZM9.99911 8.49914V15.4991L15.9991 11.9991L9.99911 8.49914Z"></path></svg>
-                <div>กุนเชียงแมว</div>
-            </a>
+        <div class="mt-4">
+          <h4
+            class="font-semibold text-gray-300 mb-2"
+            data-en="Packs to Buy:"
+            data-th="แพ็กที่แนะนำให้ซื้อ:"
+          >
+            Packs to Buy:
+          </h4>
+          <ul id="packsList" class="list-none p-0 text-left space-y-2"></ul>
         </div>
+      </div>
+
+      <div class="mt-4 bg-gray-700/50 p-5 rounded-lg border border-gray-600">
+        <h4
+          class="font-semibold text-cyan-400 mb-3"
+          data-en="Calculation Breakdown"
+          data-th="รายละเอียดการคำนวณ"
+        >
+          Calculation Breakdown
+        </h4>
+        <div class="space-y-2 text-sm">
+          <p class="flex justify-between text-gray-400">
+            <span data-en="Total Top-Up:" data-th="ยอดเติมรวม:"
+              >Total Top-Up:</span
+            ><span id="totalTopUpBreakdown" class="font-mono text-gray-200"
+              >0</span
+            >
+          </p>
+          <p class="flex justify-between text-gray-400">
+            <span data-en="Bonus Calculation Base:" data-th="ฐานคำนวณโบนัส:"
+              >Bonus Calculation Base:</span
+            ><span id="bonusBaseBreakdown" class="font-mono text-gray-200"
+              >0</span
+            >
+          </p>
+          <p class="flex justify-between text-gray-400">
+            <span data-en="Bonus Rate:" data-th="อัตราโบนัส:">Bonus Rate:</span
+            ><span id="bonusRateBreakdown" class="font-mono text-gray-200"
+              >0%</span
+            >
+          </p>
+        </div>
+      </div>
+
+      <div class="text-center mt-6 text-xs text-gray-500">
+        <p
+          data-en="Note: This tool is for calculation convenience only. Please check official sources for accuracy."
+          data-th="หมายเหตุ: เครื่องมือนี้ใช้เพื่อความสะดวกในการคำนวณเท่านั้น โปรดตรวจสอบข้อมูลจากแหล่งที่เป็นทางการเพื่อความถูกต้อง"
+        >
+          Note: This tool is for calculation convenience only. Please check
+          official sources for accuracy.
+        </p>
+        <a
+          href="https://www.swordofjustice.com/en/banner/20250828/42152_1256611.html"
+          target="_blank"
+          class="text-cyan-500 hover:underline"
+          data-en="Read more details here"
+          data-th="อ่านรายละเอียดเพิ่มเติมที่นี่"
+          >Read more details here</a
+        >
+        <div
+          class="mt-4 pt-4 border-t border-gray-700 flex items-center justify-center gap-4"
+        >
+          <a
+            href="https://www.youtube.com/@JusticeCatSausage"
+            target="_blank"
+            class="flex items-center gap-2 hover:text-red-500 transition-colors"
+          >
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M12.2439 4C12.778 4.00294 14.1143 4.01586 15.5341 4.07273L16.0375 4.09468C17.467 4.16236 18.8953 4.27798 19.6037 4.4755C20.5486 4.74095 21.2913 5.5155 21.5423 6.49732C21.942 8.05641 21.992 11.0994 21.9982 11.8358L21.9991 11.9884L21.9991 11.9991C21.9991 11.9991 21.9991 12.0028 21.9991 12.0099L21.9982 12.1625C21.992 12.8989 21.942 15.9419 21.5423 17.501C21.2878 18.4864 20.5451 19.261 19.6037 19.5228C18.8953 19.7203 17.467 19.8359 16.0375 19.9036L15.5341 19.9255C14.1143 19.9824 12.778 19.9953 12.2439 19.9983L12.0095 19.9991L11.9991 19.9991C11.9991 19.9991 11.9956 19.9991 11.9887 19.9991L11.7545 19.9983C10.6241 19.9921 5.89772 19.941 4.39451 19.5228C3.4496 19.2573 2.70692 18.4828 2.45587 17.501C2.0562 15.9419 2.00624 12.8989 2 12.1625V11.8358C2.00624 11.0994 2.0562 8.05641 2.45587 6.49732C2.7104 5.51186 3.45308 4.73732 4.39451 4.4755C5.89772 4.05723 10.6241 4.00622 11.7545 4H12.2439ZM9.99911 8.49914V15.4991L15.9991 11.9991L9.99911 8.49914Z"
+              ></path>
+            </svg>
+            <span>Cat Sausage</span>
+          </a>
+          <a
+            href="https://www.youtube.com/@กุนเชียงแมว"
+            target="_blank"
+            class="flex items-center gap-2 hover:text-red-500 transition-colors"
+          >
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M12.2439 4C12.778 4.00294 14.1143 4.01586 15.5341 4.07273L16.0375 4.09468C17.467 4.16236 18.8953 4.27798 19.6037 4.4755C20.5486 4.74095 21.2913 5.5155 21.5423 6.49732C21.942 8.05641 21.992 11.0994 21.9982 11.8358L21.9991 11.9884L21.9991 11.9991C21.9991 11.9991 21.9991 12.0028 21.9991 12.0099L21.9982 12.1625C21.992 12.8989 21.942 15.9419 21.5423 17.501C21.2878 18.4864 20.5451 19.261 19.6037 19.5228C18.8953 19.7203 17.467 19.8359 16.0375 19.9036L15.5341 19.9255C14.1143 19.9824 12.778 19.9953 12.2439 19.9983L12.0095 19.9991L11.9991 19.9991C11.9991 19.9991 11.9956 19.9991 11.9887 19.9991L11.7545 19.9983C10.6241 19.9921 5.89772 19.941 4.39451 19.5228C3.4496 19.2573 2.70692 18.4828 2.45587 17.501C2.0562 15.9419 2.00624 12.8989 2 12.1625V11.8358C2.00624 11.0994 2.0562 8.05641 2.45587 6.49732C2.7104 5.51186 3.45308 4.73732 4.39451 4.4755C5.89772 4.05723 10.6241 4.00622 11.7545 4H12.2439ZM9.99911 8.49914V15.4991L15.9991 11.9991L9.99911 8.49914Z"
+              ></path>
+            </svg>
+            <span>กุนเชียงแมว</span>
+          </a>
+        </div>
+      </div>
     </div>
 
     <script>
-        let isEnglish = true;
+      let isEnglish = true;
+      const priceList = {
+        THB: { 6480: 3350, 3280: 1730, 1980: 1070, 980: 529, 300: 169, 60: 39 },
+        USD: {
+          6480: 99.99,
+          3280: 49.99,
+          1980: 29.99,
+          980: 14.99,
+          300: 4.99,
+          60: 0.99,
+        },
+      };
 
-        function updateTexts() {
-            document.querySelectorAll('[data-en]').forEach(element => {
-                element.textContent = isEnglish ? element.getAttribute('data-en') : element.getAttribute('data-th');
-            });
-            document.title = isEnglish ? "Sword of Justice Rebate Calculator" : "โปรแกรมคำนวณเงินคืน Sword of Justice";
-        }
+      const characterInputsContainer =
+        document.getElementById("characterInputs");
+      const characterTemplate = characterInputsContainer
+        .querySelector(".character-group")
+        .cloneNode(true);
 
-        function toggleLanguage() {
-            isEnglish = !isEnglish;
-            updateTexts();
-        }
-
-        function addCharacter() {
-            const characterInputs = document.getElementById('characterInputs');
-            const newCharacter = document.createElement('div');
-            newCharacter.className = 'character-group';
-            newCharacter.innerHTML = `
-                <div class="input-item">
-                    <label data-en="Top-Up (Jade):" data-th="ยอดเติมหยก:">Top-Up (Jade):</label>
-                    <input type="number" class="top-up-amount" min="0" value="0" oninput="calculateRebate()">
-                </div>
-                <div class="input-item">
-                    <label data-en="Level:" data-th="เลเวล:">Level:</label>
-                    <input type="number" class="character-level" min="1" value="1" oninput="calculateRebate()">
-                </div>
-                <button class="remove-btn" onclick="removeCharacter(this)">x</button>
-            `;
-            characterInputs.appendChild(newCharacter);
-            updateTexts();
-            calculateRebate();
-        }
-
-        function removeCharacter(button) {
-            const characterGroup = button.parentNode;
-            characterGroup.remove();
-            calculateRebate();
-        }
-
-        function calculateRebate() {
-            const characterGroups = document.querySelectorAll('.character-group');
-            let totalTopUp = 0;
-            let highestLevel = 0;
-
-            characterGroups.forEach(group => {
-                const topUpAmount = parseInt(group.querySelector('.top-up-amount').value) || 0;
-                const characterLevel = parseInt(group.querySelector('.character-level').value) || 0;
-
-                totalTopUp += topUpAmount;
-                if (characterLevel > highestLevel) {
-                    highestLevel = characterLevel;
-                }
-            });
-
-            const unboundJade = totalTopUp;
-            let soulboundJade = 0;
-            
-            const baseForBonus = Math.min(totalTopUp, 30000);
-
-            if (highestLevel >= 60) {
-                soulboundJade = baseForBonus * 0.50;
-            } else if (highestLevel > 0 && highestLevel < 60) {
-                soulboundJade = baseForBonus * 0.30;
-            }
-
-            document.getElementById('unboundResult').textContent = unboundJade.toLocaleString();
-            document.getElementById('soulboundResult').textContent = soulboundJade.toLocaleString();
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            updateTexts();
-            calculateRebate();
+      function updateTexts() {
+        document.querySelectorAll("[data-en]").forEach((element) => {
+          element.textContent = isEnglish
+            ? element.getAttribute("data-en")
+            : element.getAttribute("data-th");
         });
+        document
+          .querySelectorAll("#currency option, .character-level-select option")
+          .forEach((opt) => {
+            opt.textContent = isEnglish
+              ? opt.getAttribute("data-en")
+              : opt.getAttribute("data-th");
+          });
+        document.title = isEnglish
+          ? "Sword of Justice Rebate Calculator"
+          : "โปรแกรมคำนวณเงินคืน Sword of Justice";
+      }
+
+      function toggleLanguage() {
+        isEnglish = !isEnglish;
+        updateTexts();
+        calculateRebate(); // Recalculate to update dynamic text like pack recommendations
+      }
+
+      function addCharacter() {
+        const newCharacter = characterTemplate.cloneNode(true);
+        newCharacter.querySelector(".top-up-amount").value = "0";
+        newCharacter.querySelector(".character-level-select").value = "1";
+        characterInputsContainer.appendChild(newCharacter);
+        updateTexts();
+        calculateRebate();
+      }
+
+      function removeCharacter(button) {
+        const characterGroup = button.parentNode;
+        characterGroup.remove();
+        calculateRebate();
+      }
+
+      function calculateCost(totalJade, currency) {
+        if (totalJade <= 0)
+          return { totalCost: 0, packsToBuy: [], totalActualJade: 0 };
+
+        const prices = priceList[currency];
+        let remainingJade = totalJade;
+        let totalCost = 0;
+        const packsToBuyCount = {};
+        const jadePacks = Object.keys(prices)
+          .map((j) => parseInt(j))
+          .sort((a, b) => b - a);
+
+        // Greedy pass for large packs
+        for (const jadeAmount of jadePacks) {
+          const numPacks = Math.floor(remainingJade / jadeAmount);
+          if (numPacks > 0) {
+            packsToBuyCount[jadeAmount] =
+              (packsToBuyCount[jadeAmount] || 0) + numPacks;
+            totalCost += numPacks * prices[String(jadeAmount)];
+            remainingJade -= numPacks * jadeAmount;
+          }
+        }
+
+        // Optimal pass for the remainder
+        if (remainingJade > 0) {
+          const suitablePacks = jadePacks
+            .filter((p) => p >= remainingJade)
+            .sort((a, b) => a - b);
+          const packToBuy =
+            suitablePacks.length > 0
+              ? suitablePacks[0]
+              : jadePacks[jadePacks.length - 1];
+
+          packsToBuyCount[packToBuy] = (packsToBuyCount[packToBuy] || 0) + 1;
+          totalCost += prices[String(packToBuy)];
+        }
+
+        const packsToBuy = Object.keys(packsToBuyCount)
+          .map((jade) => ({
+            jade: parseInt(jade),
+            price: prices[jade],
+            count: packsToBuyCount[jade],
+          }))
+          .sort((a, b) => b.jade - a.jade);
+
+        const totalActualJade = packsToBuy.reduce(
+          (sum, pack) => sum + pack.jade * pack.count,
+          0
+        );
+
+        return { totalCost, packsToBuy, totalActualJade };
+      }
+
+      function calculateRebate() {
+        let desiredJade = 0;
+        let highestLevel = 0;
+
+        document
+          .querySelectorAll("#characterInputs .character-group")
+          .forEach((group) => {
+            const topUpAmount =
+              parseInt(group.querySelector(".top-up-amount").value) || 0;
+            const characterLevel =
+              parseInt(group.querySelector(".character-level-select").value) ||
+              0;
+            desiredJade += topUpAmount;
+            if (characterLevel > highestLevel) {
+              highestLevel = characterLevel;
+            }
+          });
+
+        const selectedCurrency = document.getElementById("currency").value;
+        const costData = calculateCost(desiredJade, selectedCurrency);
+
+        // Use the actual jade from packs as the new Total Top-Up for all rebate calculations
+        const totalTopUp = costData.totalActualJade;
+
+        const baseForBonus = Math.min(totalTopUp, 30000);
+        let bonusRate = 0;
+        if (highestLevel >= 60) bonusRate = 50;
+        else if (highestLevel > 0) bonusRate = 30;
+
+        const unboundJade = totalTopUp;
+        const soulboundJade = Math.floor(baseForBonus * (bonusRate / 100));
+
+        // Update UI
+        document.getElementById("unboundResult").textContent =
+          unboundJade.toLocaleString();
+        document.getElementById("soulboundResult").textContent =
+          soulboundJade.toLocaleString();
+
+        document.getElementById("totalTopUpBreakdown").textContent =
+          totalTopUp.toLocaleString();
+        document.getElementById("bonusBaseBreakdown").textContent =
+          baseForBonus.toLocaleString();
+        document.getElementById("bonusRateBreakdown").textContent =
+          bonusRate + "%";
+
+        const currencySymbol = selectedCurrency === "THB" ? "฿" : "$";
+        document.getElementById(
+          "totalCost"
+        ).textContent = `${currencySymbol}${costData.totalCost.toLocaleString(
+          undefined,
+          { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+        )}`;
+        document.getElementById("actualJade").textContent =
+          costData.totalActualJade.toLocaleString();
+
+        const packsList = document.getElementById("packsList");
+        packsList.innerHTML = "";
+
+        if (costData.packsToBuy.length > 0) {
+          costData.packsToBuy.forEach((pack) => {
+            const li = document.createElement("li");
+            li.className =
+              "bg-gray-800/70 p-2 rounded-md text-sm text-gray-300";
+            const packText = isEnglish
+              ? `${
+                  pack.count
+                } x ${pack.jade.toLocaleString()} Jade (${currencySymbol}${pack.price.toFixed(
+                  2
+                )})`
+              : `${
+                  pack.count
+                } x ${pack.jade.toLocaleString()} หยก (${currencySymbol}${pack.price.toFixed(
+                  2
+                )})`;
+            li.textContent = packText;
+            packsList.appendChild(li);
+          });
+        } else {
+          const li = document.createElement("li");
+          li.className = "text-gray-500 text-sm";
+          li.textContent = isEnglish
+            ? "Enter a top-up amount."
+            : "กรุณาใส่ยอดเติมเงิน";
+          packsList.appendChild(li);
+        }
+      }
+
+      // Event Listeners Setup
+      document.addEventListener("DOMContentLoaded", () => {
+        document
+          .querySelector(".lang-switch")
+          .addEventListener("click", toggleLanguage);
+        document
+          .getElementById("currency")
+          .addEventListener("change", calculateRebate);
+        document
+          .querySelector(".add-btn")
+          .addEventListener("click", addCharacter);
+
+        characterInputsContainer.addEventListener("input", (e) => {
+          if (e.target.matches(".top-up-amount")) {
+            calculateRebate();
+          }
+        });
+        characterInputsContainer.addEventListener("change", (e) => {
+          if (e.target.matches(".character-level-select")) {
+            calculateRebate();
+          }
+        });
+
+        characterInputsContainer.addEventListener("click", (e) => {
+          if (e.target.matches(".remove-btn")) {
+            removeCharacter(e.target);
+          }
+        });
+
+        updateTexts();
+        calculateRebate();
+      });
     </script>
-</body>
+  </body>
 </html>
